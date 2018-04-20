@@ -5,6 +5,8 @@ from math import log
 from collections import defaultdict
 import random
 
+
+nltk.download('punkt')
 WHO = ''
 WHO = input('Give us a Character: ')
 
@@ -66,5 +68,117 @@ for speaker in top_characters:
     character_quotes_parameters_df = character_quotes_parameters_df.append(temp_entry_dict, ignore_index=True)
     
 #character_quotes_parameters_df.head()
+
+kyle_word_freq = nltk.FreqDist(kyle_tokens_list)
+kyle_word_log_probability = [ {word: -log(float(count)/ len(kyle_tokens_list))} for word, count in kyle_word_freq.items() ]
+kyle_word_log_probability[:10]
+
+
+# Build n-gram builder
+def build_ngram(text, n):
+    # sanity check, but generally speaking we want the text to be much much longer than the sentence length to get
+    # interesting\funny results
+    if len(text) < n:
+        print("Text length is less than n")
+        return text
+    index = 0
+    tokenized_text = nltk.word_tokenize(text)  # Try it with lower case, i.e. text.lower()
+
+    ngram = defaultdict()
+
+    # Loop over all text, except the last n words, since they cannot have n words after
+    for index in range(len(tokenized_text) - n):
+        # Get current word from the corpus
+        current_word = tokenized_text[index]
+
+        # Get the next n words, so that we can push them into the current word's entry in the ngram dictionary
+        ngram_tail = " ".join(tokenized_text[index + 1: index + n])
+
+        # The general structure of an entry is as follows: the beginning of the ngram is the key. Its contents is a dictionary
+        # that contains the total number of grams that are started by this first word, plus another dictionary of all the grams
+        # and their counts. To save a little space, only the tail is stored in that last dictionary. That way, we can compute
+        # easily the probability since everything needed is already stored inside
+
+        # If this is a new entry, create a new one
+        if current_word not in ngram.keys():
+            ngram[current_word] = {
+                'total_grams_start': 1,
+                'grams': {ngram_tail: 1}
+            }
+        else:
+            # increase the total count of grams starting with this word
+            ngram[current_word]['total_grams_start'] += 1
+            # If this ngram tail is new, create a new sub-entry with this ngram
+            if ngram_tail not in ngram[current_word]['grams'].keys():
+                ngram[current_word]['grams'][ngram_tail] = 1
+            # else, increment the entry count by one
+            else:
+                ngram[current_word]['grams'][ngram_tail] += 1
+
+    return ngram
+
+
+def Generate_quote(grammed_input, gram_size, start_word, quote_length):
+    output_str = start_word
+
+    # This is like the seed based on which we will pick the next word.
+    current_word = start_word.lower()
+
+    next_word = ""
+
+    # iterate length by gram size times + 1. We want to iterate as much as needed to build a sentence of n size
+    for i in range(quote_length // gram_size + 1):
+        # We want some randomness in picking the next word, not just pick the highest probable next word. So we are going to
+        # set a minimum probability under which the gram is not going to get picked.
+        random_num = random.random()
+
+        # cumulative probability
+        cum_prob = 0
+        for potential_next_word, count in grammed_input[current_word]['grams'].items():
+            # The cumulative probability is the count of this gram-tail divided by how many time the see word appeared
+            cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
+            # print cum_prob, random_num
+            # If the cumulative probability has reached the minimum probability threshold, then this is the gram to use
+            if cum_prob > random_num:
+                output_str += (" " + potential_next_word)
+                current_word = potential_next_word.split()[-1]
+                break
+            # else, i.e. this gram's probability is lower than our random threshold, get the next gram
+            else:
+                continue
+    # finish with an end of sentence. For now, a sentence ends with a full stop, no question\exclamation marks.
+    # The code will continue to generate text until we encounter a gram that ends with a full stop.
+    if output_str[-1] != '.':
+        # eos = end of sentence
+        no_eos = True
+        while no_eos:
+            cum_prob = 0
+            random_num = random.random()
+
+            for potential_next_word, count in grammed_input[current_word]['grams'].items():
+                cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
+                # print cum_prob, random_num
+                if cum_prob > random_num:
+                    if '.' in potential_next_word:
+                        potential_next_word = potential_next_word.split('.')[0]
+                        output_str += (" " + potential_next_word + ".")
+                        no_eos = False
+                    else:
+                        output_str += (" " + potential_next_word)
+                        current_word = potential_next_word.split()[-1]
+                    break
+                else:
+                    continue
+
+    return output_str
+
+kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
+print(Generate_quote(kyle_bigram, 2, 'i', 12))
+print(Generate_quote(kyle_bigram, 2, 'i', 12))
+
+
+
+
+
 
 
