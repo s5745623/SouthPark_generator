@@ -5,10 +5,10 @@ from math import log
 from collections import defaultdict
 import random
 
-
 nltk.download('punkt')
 WHO = ''
 WHO = input('Give us a Character: ')
+# Rhyme = input('Give us a Rhyme: ')
 
 
 quotes = pd.read_csv('data/All-seasons.csv')
@@ -173,8 +173,11 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     return output_str
 
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
-print(Generate_quote(kyle_bigram, 2, 'i', 12))
-print(Generate_quote(kyle_bigram, 2, 'i', 12))
+print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
+print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
+print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
+print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
+#print(Generate_quote(kyle_bigram, 2, 'i', 12))
 
 
 
