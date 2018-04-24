@@ -4,10 +4,14 @@ import nltk
 from math import log
 from collections import defaultdict
 import random
+import topic as tp
+
 
 nltk.download('punkt')
+
 WHO = ''
 WHO = input('Give us a Character: ')
+who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 
 
@@ -29,7 +33,7 @@ kyle_tokens = kyle_quotes_lower.apply(nltk.word_tokenize)
 kyle_tokens_list =  [ word for inner_list in list(kyle_tokens) for word in inner_list]
 
 kyle_lexical_diversity = len(set(kyle_tokens_list)) / len(kyle_tokens_list)
-print(kyle_lexical_diversity)
+#print(kyle_lexical_diversity)
 
 #len(kyle_tokens_list)/len(kyle_tokens)
 
