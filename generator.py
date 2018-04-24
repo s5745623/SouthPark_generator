@@ -12,7 +12,7 @@ import string
 #nltk.download('punkt')
 
 WHO = ''
-WHO = input('Give us a Character: ')
+WHO = input('Who is the author: ')
 stanzas = int(input("How many Stanzas for the poem? "))
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
@@ -158,6 +158,8 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
                 if i == quote_length // gram_size and current_word != 'punc':
                     output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
                     return output_str
+                if current_word == 'punc':
+                    i -= 1
                 break
             # else, i.e. this gram's probability is lower than our random threshold, get the next gram
             else:
@@ -207,6 +209,7 @@ def sentiment(sentences):
     return score
 
 def generate_poem(stanzas, target):
+    
     for k in range(stanzas):
         for i in range(4):
             poem = Generate_quote(kyle_bigram, 2, target, 12)
