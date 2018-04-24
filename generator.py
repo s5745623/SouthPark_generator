@@ -5,6 +5,7 @@ from math import log
 from collections import defaultdict
 import random
 import topic as tp
+import re
 
 
 nltk.download('punkt')
@@ -31,6 +32,9 @@ kyle_tokens = kyle_quotes_lower.apply(nltk.word_tokenize)
 #kyle_quotes.head()
 
 kyle_tokens_list =  [ word for inner_list in list(kyle_tokens) for word in inner_list]
+
+
+kyle_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-]', '<p>', i) for i in kyle_tokens_list]
 
 kyle_lexical_diversity = len(set(kyle_tokens_list)) / len(kyle_tokens_list)
 #print(kyle_lexical_diversity)
