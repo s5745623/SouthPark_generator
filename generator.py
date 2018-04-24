@@ -35,7 +35,7 @@ kyle_tokens = kyle_quotes_lower.apply(nltk.word_tokenize)
 kyle_tokens_list =  [ word for inner_list in list(kyle_tokens) for word in inner_list]
 
 
-kyle_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'{1}', 'punc', i) for i in kyle_tokens_list]
+kyle_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'$', 'punc', i) for i in kyle_tokens_list]
 
 kyle_lexical_diversity = len(set(kyle_tokens_list)) / len(kyle_tokens_list)
 #print(kyle_lexical_diversity)
@@ -50,7 +50,7 @@ def get_character_params(data, character):
     character_quotes_lower = character_quotes.apply(str.lower).apply(str.rstrip, '\n')
     character_tokens = character_quotes_lower.apply(nltk.word_tokenize)
     character_tokens_list =  [ word for inner_list in list(character_tokens) for word in inner_list]
-    character_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'{1}', 'punc', i) for i in character_tokens_list]
+    character_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'$', 'punc', i) for i in character_tokens_list]
     number_of_unique_words = len(set(character_tokens_list))
     character_lexical_diversity = number_of_unique_words / len(character_tokens_list)
     character_avg_sentence_length = len(character_tokens_list)/len(character_tokens)
