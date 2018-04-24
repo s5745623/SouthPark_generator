@@ -12,7 +12,7 @@ nltk.download('punkt')
 
 WHO = ''
 WHO = input('Give us a Character: ')
-lines = input("How many lines for the poem? ")
+lines = int(input("How many lines for the poem? "))
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 
