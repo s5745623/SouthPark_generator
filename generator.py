@@ -6,13 +6,14 @@ from collections import defaultdict
 import random
 import topic as tp
 import re
+import math
+import string
 
-
-nltk.download('punkt')
+#nltk.download('punkt')
 
 WHO = ''
 WHO = input('Give us a Character: ')
-lines = int(input("How many lines for the poem? "))
+stanzas = int(input("How many Stanzas for the poem? "))
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 
@@ -94,7 +95,7 @@ def build_ngram(text, n):
     index = 0
     tokenized_text = nltk.word_tokenize(text)  # Try it with lower case, i.e. text.lower()
 
-    ngram = defaultdict()
+    ngram = defaultdict(int)
 
     # Loop over all text, except the last n words, since they cannot have n words after
     for index in range(len(tokenized_text) - n):
@@ -190,21 +191,40 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     #             else:
     #                 continue
 
-    return output_str
+    return 'Oh ' + output_str
+
+def sentiment(sentences):
+
+    from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
+    sid = SIA()
+    score = defaultdict(float)
+    for sentence in nltk.word_tokenize(sentences):
+        score['pos'] += sid.polarity_scores(sentence)['pos']
+        score['neg'] += sid.polarity_scores(sentence)['neg']
+        score['compound'] += sid.polarity_scores(sentence)['compound']
+        score['neu'] += sid.polarity_scores(sentence)['neu']
+
+    return score
+
+def generate_poem(stanzas, target):
+    for k in range(stanzas):
+        for i in range(4):
+            poem = Generate_quote(kyle_bigram, 2, target, 12)
+            if i != 3:
+                poem =  nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + ',')
+                poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
+                score = sentiment(poem)
+            else: 
+                poem = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + '.')
+                poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
+                score = sentiment(poem)
+            print(poem + '\tNegative: ' + str(score['neg']) + '\tPositive: ' + str(score['pos']))
+        print('\n')
 
 target = who 
-#lines = 4
+#stanzas = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
-for i in range(lines):
-    poem = Generate_quote(kyle_bigram, 2, target, 12)
-    if i != lines-1:
-        poem = re.sub(r'punc','!',poem[:-5]) + ','
-    else: 
-        poem = re.sub(r'punc','!',poem[:-5]) + '.'
-
-    print(poem)
-
-
+generate_poem(stanzas,target)
 
 
 

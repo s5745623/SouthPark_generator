@@ -29,7 +29,7 @@ def get_topic(chac):
 	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:5]
 	#print(top10_chac)
 	result = random.choice(top10_chac)[1]
-	print('random poem: from {} to {}\n'.format(chac, result))
+	print('\nOh {}!\tby {}\n'.format(result, chac))
 	
 	
 	return result
