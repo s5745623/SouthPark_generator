@@ -12,6 +12,7 @@ nltk.download('punkt')
 
 WHO = ''
 WHO = input('Give us a Character: ')
+lines = input("How many lines for the poem? ")
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 
@@ -19,7 +20,7 @@ who = tp.get_topic(WHO)
 quotes = pd.read_csv('data/All-seasons.csv')
 
 quotes_by_character = quotes.groupby('Character')
-quotes_by_character.count()[quotes_by_character.count().Line > 1000]
+quotes_by_character.count()[quotes_by_character.count().Line > len(quotes)]
 
 kyle_quotes = quotes[quotes.Character == WHO].Line
 
@@ -34,7 +35,7 @@ kyle_tokens = kyle_quotes_lower.apply(nltk.word_tokenize)
 kyle_tokens_list =  [ word for inner_list in list(kyle_tokens) for word in inner_list]
 
 
-kyle_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-]', '<p>', i) for i in kyle_tokens_list]
+kyle_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'{1}', 'punc', i) for i in kyle_tokens_list]
 
 kyle_lexical_diversity = len(set(kyle_tokens_list)) / len(kyle_tokens_list)
 #print(kyle_lexical_diversity)
@@ -49,6 +50,7 @@ def get_character_params(data, character):
     character_quotes_lower = character_quotes.apply(str.lower).apply(str.rstrip, '\n')
     character_tokens = character_quotes_lower.apply(nltk.word_tokenize)
     character_tokens_list =  [ word for inner_list in list(character_tokens) for word in inner_list]
+    character_tokens_list = [re.sub(r'[^A-Za-z0-9\'\-{1}]+$|\'{1}', 'punc', i) for i in character_tokens_list]
     number_of_unique_words = len(set(character_tokens_list))
     character_lexical_diversity = number_of_unique_words / len(character_tokens_list)
     character_avg_sentence_length = len(character_tokens_list)/len(character_tokens)
@@ -127,6 +129,7 @@ def build_ngram(text, n):
 
 
 def Generate_quote(grammed_input, gram_size, start_word, quote_length):
+    
     output_str = start_word
 
     # This is like the seed based on which we will pick the next word.
@@ -148,44 +151,59 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
             # print cum_prob, random_num
             # If the cumulative probability has reached the minimum probability threshold, then this is the gram to use
             if cum_prob > random_num:
+
                 output_str += (" " + potential_next_word)
                 current_word = potential_next_word.split()[-1]
+                if i == quote_length // gram_size and current_word != 'punc':
+                    output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
+                    return output_str
                 break
             # else, i.e. this gram's probability is lower than our random threshold, get the next gram
             else:
                 continue
+
     # finish with an end of sentence. For now, a sentence ends with a full stop, no question\exclamation marks.
     # The code will continue to generate text until we encounter a gram that ends with a full stop.
-    if output_str[-1] != '.':
-        # eos = end of sentence
-        no_eos = True
-        while no_eos:
-            cum_prob = 0
-            random_num = random.random()
+    # if output_str[-1] != 'punc':
+    #     output_str = start_word
 
-            for potential_next_word, count in grammed_input[current_word]['grams'].items():
-                cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
-                # print cum_prob, random_num
-                if cum_prob > random_num:
-                    if '.' in potential_next_word:
-                        potential_next_word = potential_next_word.split('.')[0]
-                        output_str += (" " + potential_next_word + ".")
-                        no_eos = False
-                    else:
-                        output_str += (" " + potential_next_word)
-                        current_word = potential_next_word.split()[-1]
-                    break
-                else:
-                    continue
+    #     # This is like the seed based on which we will pick the next word.
+    #     current_word = start_word.lower()
+    #     # eos = end of sentence
+    #     no_eos = True
+    #     while no_eos:
+    #         cum_prob = 0
+    #         random_num = random.random()
+
+    #         for potential_next_word, count in grammed_input[current_word]['grams'].items():
+    #             cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
+    #             # print cum_prob, random_num
+    #             if cum_prob > random_num:
+    #                 if '.' in potential_next_word:
+    #                     potential_next_word = potential_next_word.split('.')[0]
+    #                     output_str += (" " + potential_next_word + ".")
+    #                     no_eos = False
+    #                 else:
+    #                     output_str += (" " + potential_next_word)
+    #                     current_word = potential_next_word.split()[-1]
+    #                 break
+    #             else:
+    #                 continue
 
     return output_str
 
+target = who 
+#lines = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
-print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
-print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
-print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
-print(Generate_quote(kyle_bigram, 2, 'Kyle', 12))
-#print(Generate_quote(kyle_bigram, 2, 'i', 12))
+for i in range(lines):
+    poem = Generate_quote(kyle_bigram, 2, target, 12)
+    if i != lines-1:
+        poem = re.sub(r'punc','!',poem[:-5]) + ','
+    else: 
+        poem = re.sub(r'punc','!',poem[:-5]) + '.'
+
+    print(poem)
+
 
 
 
