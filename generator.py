@@ -200,11 +200,15 @@ def sentiment(sentences):
     from nltk.sentiment.vader import SentimentIntensityAnalyzer as SIA
     sid = SIA()
     score = defaultdict(float)
-    for sentence in nltk.word_tokenize(sentences):
-        score['pos'] += sid.polarity_scores(sentence)['pos']
-        score['neg'] += sid.polarity_scores(sentence)['neg']
-        score['compound'] += sid.polarity_scores(sentence)['compound']
-        score['neu'] += sid.polarity_scores(sentence)['neu']
+    scores = sid.polarity_scores(sentences)
+    # for sentence in nltk.word_tokenize(sentences):
+    #     score['pos'] += sid.polarity_scores(sentence)['pos']
+    #     score['neg'] += sid.polarity_scores(sentence)['neg']
+    #     score['compound'] += sid.polarity_scores(sentence)['compound']
+    #     score['neu'] += sid.polarity_scores(sentence)['neu']
+    for key in sorted(scores):
+        # print('{0}: {1}, '.format(key, scores[key]), end='')
+        score[key] = scores[key]
 
     return score
 
@@ -212,7 +216,7 @@ def generate_poem(stanzas, target):
     
     for k in range(stanzas):
         for i in range(4):
-            poem = Generate_quote(kyle_bigram, 2, target, 12)
+            poem = Generate_quote(kyle_bigram, 2, target, 24)
             if i != 3:
                 poem =  nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + ',')
                 poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
@@ -221,11 +225,11 @@ def generate_poem(stanzas, target):
                 poem = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + '.')
                 poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
                 score = sentiment(poem)
-            print(poem + '\tNegative: ' + str(score['neg']) + '\tPositive: ' + str(score['pos']))
+            print(poem + '\tSentiment: ' + str(dict(score)))
         print('\n')
 
 target = who 
-#stanzas = 4
+# stanzas = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
 generate_poem(stanzas,target)
 
