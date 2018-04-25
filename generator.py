@@ -14,6 +14,7 @@ import string
 WHO = ''
 WHO = input('Who is the author: ')
 stanzas = int(input("How many Stanzas for the poem? "))
+mood = input("Pos or Neg? ")
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 
@@ -214,18 +215,35 @@ def sentiment(sentences):
 
 def generate_poem(stanzas, target):
     
+    poem_list = {}
     for k in range(stanzas):
-        for i in range(4):
+        i = 0
+        poem_list[k] = []
+        while len(poem_list[k]) < 4:
             poem = Generate_quote(kyle_bigram, 2, target, 24)
-            if i != 3:
-                poem =  nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + ',')
-                poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
-                score = sentiment(poem)
-            else: 
-                poem = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]) + '.')
-                poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem]).strip()
-                score = sentiment(poem)
-            print(poem + '\tSentiment: ' + str(dict(score)))
+            poem_tok = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]))
+            poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem_tok]).strip()
+            #if sentiment(poem)['compound'] >= 0.5:
+            score = sentiment(poem)
+            if score['compound'] <= -0.5 and mood == 'Neg':       
+                if len(poem_list[k]) < 3:
+                    poem_list[k].append(poem + ',')
+                    # print(score)
+                else: 
+                    poem_list[k].append(poem + '.')
+                    # print(score)
+            elif score['compound'] >= 0.5 and mood == 'Pos':
+                if len(poem_list[k]) < 3:
+                    poem_list[k].append(poem + ',')
+                    # print(score)
+                else: 
+                    poem_list[k].append(poem + '.')
+                    # print(score)
+            # print(poem + '\tSentiment: ' + str(dict(score)))
+        #print('\n')
+    for stans in poem_list.values():    
+        for lines in stans:
+            print(lines)
         print('\n')
 
 target = who 
