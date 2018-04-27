@@ -141,8 +141,9 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     current_word = start_word.lower()
 
     next_word = ""
-
+    # i=0
     # iterate length by gram size times + 1. We want to iterate as much as needed to build a sentence of n size
+    # while i < quote_length // gram_size + 1:
     for i in range(quote_length // gram_size + 1):
         # We want some randomness in picking the next word, not just pick the highest probable next word. So we are going to
         # set a minimum probability under which the gram is not going to get picked.
@@ -157,53 +158,23 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
             # If the cumulative probability has reached the minimum probability threshold, then this is the gram to use
             if cum_prob > random_num:
 
+                # if i != quote_length // gram_size and current_word == 'punc':
+                #     break
+                # i+=1
                 output_str += (" " + potential_next_word)
                 current_word = potential_next_word.split()[-1]
                 if i == quote_length // gram_size and current_word != 'punc':
                     output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
-                    return output_str
                 break
             # else, i.e. this gram's probability is lower than our random threshold, get the next gram
             else:
+                #print(i)
                 continue
+
+        
 
     return output_str
 
-def Generate_stanzas(grammed_input, gram_size, start_word, quote_length, count_punc):
-
-    output_str = start_word
-
-    # This is like the seed based on which we will pick the next word.
-    current_word = start_word.lower()
-
-    next_word = ""
-
-    for i in range(quote_length // gram_size + 1):
-        # We want some randomness in picking the next word, not just pick the highest probable next word. So we are going to
-        # set a minimum probability under which the gram is not going to get picked.
-        random_num = random.random()
-
-        # cumulative probability
-        cum_prob = 0
-        for potential_next_word, count in grammed_input[current_word]['grams'].items():
-            # The cumulative probability is the count of this gram-tail divided by how many time the see word appeared
-            cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
-            # print cum_prob, random_num
-            # If the cumulative probability has reached the minimum probability threshold, then this is the gram to use
-            if cum_prob > random_num:
-
-                output_str += (" " + potential_next_word)
-                current_word = potential_next_word.split()[-1]
-                if i == quote_length // gram_size and current_word != 'punc':
-                    output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
-                    return output_str
-                # if current_word == 'punc':
-                #     i -= 1
-                break
-            # else, i.e. this gram's probability is lower than our random threshold, get the next gram
-            else:
-                continue
-    return output_str
 
 def sentiment(sentences):
 
@@ -259,9 +230,11 @@ def generate_poem(stanzas, target):
 target = who 
 # stanzas = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
+#print(kyle_bigram)
 generate_poem(stanzas, target)
 
-viz.viz(character_quotes_parameters_df)
+
+# viz.viz(character_quotes_parameters_df)
 
 
 
