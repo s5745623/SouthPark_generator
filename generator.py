@@ -8,8 +8,10 @@ import topic as tp
 import re
 import math
 import string
+import viz
 
-#nltk.download('punkt')
+nltk.download('punkt')
+nltk.download('vader_lexicon')
 
 WHO = ''
 WHO = input('Who is the author: ')
@@ -48,6 +50,7 @@ top_characters = quotes_by_character.count()[quotes_by_character.count().Line > 
 
 #This function will redo all the computation explained above to compute the lexical diversity and the average sentence length
 def get_character_params(data, character):
+    
     character_quotes = data[data.Character == character].Line
     character_quotes_lower = character_quotes.apply(str.lower).apply(str.rstrip, '\n')
     character_tokens = character_quotes_lower.apply(nltk.word_tokenize)
@@ -159,42 +162,48 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
                 if i == quote_length // gram_size and current_word != 'punc':
                     output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
                     return output_str
-                if current_word == 'punc':
-                    i -= 1
                 break
             # else, i.e. this gram's probability is lower than our random threshold, get the next gram
             else:
                 continue
 
-    # finish with an end of sentence. For now, a sentence ends with a full stop, no question\exclamation marks.
-    # The code will continue to generate text until we encounter a gram that ends with a full stop.
-    # if output_str[-1] != 'punc':
-    #     output_str = start_word
+    return output_str
 
-    #     # This is like the seed based on which we will pick the next word.
-    #     current_word = start_word.lower()
-    #     # eos = end of sentence
-    #     no_eos = True
-    #     while no_eos:
-    #         cum_prob = 0
-    #         random_num = random.random()
+def Generate_stanzas(grammed_input, gram_size, start_word, quote_length, count_punc):
 
-    #         for potential_next_word, count in grammed_input[current_word]['grams'].items():
-    #             cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
-    #             # print cum_prob, random_num
-    #             if cum_prob > random_num:
-    #                 if '.' in potential_next_word:
-    #                     potential_next_word = potential_next_word.split('.')[0]
-    #                     output_str += (" " + potential_next_word + ".")
-    #                     no_eos = False
-    #                 else:
-    #                     output_str += (" " + potential_next_word)
-    #                     current_word = potential_next_word.split()[-1]
-    #                 break
-    #             else:
-    #                 continue
+    output_str = start_word
 
-    return 'Oh ' + output_str
+    # This is like the seed based on which we will pick the next word.
+    current_word = start_word.lower()
+
+    next_word = ""
+
+    for i in range(quote_length // gram_size + 1):
+        # We want some randomness in picking the next word, not just pick the highest probable next word. So we are going to
+        # set a minimum probability under which the gram is not going to get picked.
+        random_num = random.random()
+
+        # cumulative probability
+        cum_prob = 0
+        for potential_next_word, count in grammed_input[current_word]['grams'].items():
+            # The cumulative probability is the count of this gram-tail divided by how many time the see word appeared
+            cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
+            # print cum_prob, random_num
+            # If the cumulative probability has reached the minimum probability threshold, then this is the gram to use
+            if cum_prob > random_num:
+
+                output_str += (" " + potential_next_word)
+                current_word = potential_next_word.split()[-1]
+                if i == quote_length // gram_size and current_word != 'punc':
+                    output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
+                    return output_str
+                # if current_word == 'punc':
+                #     i -= 1
+                break
+            # else, i.e. this gram's probability is lower than our random threshold, get the next gram
+            else:
+                continue
+    return output_str
 
 def sentiment(sentences):
 
@@ -220,7 +229,8 @@ def generate_poem(stanzas, target):
         i = 0
         poem_list[k] = []
         while len(poem_list[k]) < 4:
-            poem = Generate_quote(kyle_bigram, 2, target, 24)
+            poem = Generate_quote(kyle_bigram, 2, target, 10)
+            poem = 'Oh ' + poem
             poem_tok = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]))
             poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem_tok]).strip()
             #if sentiment(poem)['compound'] >= 0.5:
@@ -249,7 +259,9 @@ def generate_poem(stanzas, target):
 target = who 
 # stanzas = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
-generate_poem(stanzas,target)
+generate_poem(stanzas, target)
+
+viz.viz(character_quotes_parameters_df)
 
 
 
