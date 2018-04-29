@@ -30,7 +30,7 @@ while WHO not in who_list:
     WHO = input('Who is the author: ')
     
 stanzas = int(input("\nHow many Stanzas for the poem? "))
-mood = input("Pos or Neg? ")
+mood = input("POS, NEG or WTV? ")
 Rhyme = input('SR: Rhyme by stress; FSR: Rhyme by final syllable.\nGive us a rhyme type(SR/FSR): ')
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
@@ -206,14 +206,21 @@ def generate_poem(stanzas, target):
             poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem_tok]).strip()
             #if sentiment(poem)['compound'] >= 0.5:
             score = sentiment(poem)
-            if score['compound'] <= -0.5 and mood == 'Neg':       
+            if score['compound'] <= -0.5 and mood == 'NEG':       
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
                     # print(score)
-            elif score['compound'] >= 0.5 and mood == 'Pos':
+            elif score['compound'] >= 0.5 and mood == 'POS':
+                if len(poem_list[k]) < 3:
+                    poem_list[k].append(poem + ',')
+                    # print(score)
+                else: 
+                    poem_list[k].append(poem + '.')
+                    # print(score)
+            elif mood == 'WTV':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
                     # print(score)
