@@ -31,7 +31,7 @@ def get_topic(chac):
 					Kyle_dic[i]+=1
 				#print(Kyle_dic)
 
-	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:5]
+	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:3]
 	# print(top10_chac)
 	result = random.choice(top10_chac)[1]
 	print('\nOh {}!\tby {}\n'.format(result, chac))

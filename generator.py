@@ -14,16 +14,15 @@ from nltk.corpus import cmudict
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
-who_list = ['Butters',
+stop_words_list = ['a','an', 'if', 'of',
+ '\'s','the','their','to']
+
+who_list = [
 'Cartman',
-'Chef',
 'Kenny',
 'Kyle',
-'Mr. Garrison',
-'Mr. Mackey',
-'Randy',
-'Sharon',
 'Stan']
+
 WHO = ''
 while WHO not in who_list:
     print('ONLY the character: '+', '.join(who_list))
@@ -204,12 +203,12 @@ def generate_poem(stanzas, target):
             poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
             perpleList.append(perple)
             if len(poem_list[k]) == 0:
-                while CheckOOV(poem) is False:
+                while CheckOOV(poem,stop_words_list) is False:
                     poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
                     perpleList.append(perple)
                 rhyme = poem.split()[-2]
             else:
-                while CheckRhyme(rhyme, poem) is False:
+                while CheckRhyme(rhyme, poem,stop_words_list) is False:
                     poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
                     perpleList.append(perple)
             poem = 'Oh ' + poem
@@ -219,6 +218,11 @@ def generate_poem(stanzas, target):
             poem = "".join([" "+i if not (i.startswith("'") or i.startswith("n")) and i not in string.punctuation else i for i in poem_tok]).strip()
             #if sentiment(poem)['compound'] >= 0.5:
             score = sentiment(poem)
+            # seperate same rhyme word 
+            # for line in range(len(poem_list[k])):
+            # if len(poem_list[k]) == 3 and nltk.word_tokenize(poem_list[k][1])[-1] == nltk.word_tokenize(poem_list[k][2])[-1]:
+            #     del poem_list[k][2]
+
             if score['compound'] <= -0.5 and mood == 'NEG':       
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
@@ -246,10 +250,7 @@ def generate_poem(stanzas, target):
                     poem_list[k].append(poem + '.')
                     print("perplexity:" + str(perpleList[-1]))
                     # print(score)
-            for line in range(len(poem_list[k])):
-                if line > 1 and nltk.word_tokenize(poem_list[k][line])[-2] == \
-                        nltk.word_tokenize(poem_list[k][line - 2])[-2]:
-                    del poem_list[k][line]
+
             # print(poem + '\tSentiment: ' + str(dict(score)))
         #print('\n')
 
@@ -260,20 +261,29 @@ def generate_poem(stanzas, target):
 
     return poem_list
 
-def CheckOOV(line):
+def CheckOOV(line,stop_words_list):
+
+
+
+
     word_to_check = line.split()[-2]
+    if word_to_check in stop_words_list:
+        return False
     if word_to_check in pro_dict.keys():
         return True
     else:
         return False
 
-def FinalSyllable(rhyme_word, line):
+def FinalSyllable(rhyme_word, line,stop_words_list):
+    
 #Check if the last syllable matches the rhyme:
     pron_list1 = []
     for pron1 in pro_dict[rhyme_word]:
         pron_list1.append(pron1)
 
     rhyme_to_check = line.split()[-2]
+    if rhyme_to_check in stop_words_list:
+        return False
     pron_list2 = []
     if rhyme_to_check in pro_dict.keys():
         for pron2 in pro_dict[rhyme_to_check]:
@@ -306,13 +316,17 @@ def FinalSyllable(rhyme_word, line):
     else:
         return True
 
-def Stress(rhyme_word, line):
+def Stress(rhyme_word, line,stop_words_list):
 #Check if the vowel sequence after the stressed syllable matches the rhymed word:
+    
+
     pron_list1 = []
     for i in pro_dict[rhyme_word]:
         pron_list1.append(" ".join(i))
 
     rhyme_to_check = line.split()[-2]
+    if rhyme_to_check in stop_words_list:
+        return False
     pron_list2 = []
     if rhyme_to_check in pro_dict.keys():
         for j in pro_dict[rhyme_to_check]:
@@ -328,7 +342,7 @@ def Stress(rhyme_word, line):
             while re.search('1', item1.split()[0]) is None:
                 item1 = item1[1:]
             item1 = ' '.join(item1)
-            if re.search('\b[^AEIOU\s][^AEIOU\s]*', item1) is not None:
+            if re.search('\b[^AEIOU\s]*', item1) is not None:
                 item1 = re.sub(r'\d', '', item1)
                 item1 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item1)
             for item2 in pron_list2:
@@ -336,7 +350,7 @@ def Stress(rhyme_word, line):
                     while re.search('1', item2.split()[0]) is None:
                         item2 = item2[1:]
                     item2 = ' '.join(item2)
-                    if re.search('\b[^AEIOU\s][^AEIOU\s]*', item2) is not None:
+                    if re.search('\b[^AEIOU\s]*', item2) is not None:
                         item2 = re.sub(r'\d', '', item2)
                         item2 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item2)
 
@@ -344,12 +358,12 @@ def Stress(rhyme_word, line):
                     count_match += 1
 
         elif re.search('0', item1) is not None and re.search('1', item1) is None:
-            if re.search('\b[^AEIOU\s][^AEIOU\s]*', item1) is not None:
+            if re.search('\b[^AEIOU\s]*', item1) is not None:
                 item1 = re.sub(r'\d', '', item1)
                 item1 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item1)
             for item2 in pron_list2:
                 if re.search('0', item2) is not None:
-                    if re.search('\b[^AEIOU\s][^AEIOU\s]*', item2) is not None:
+                    if re.search('\b[^AEIOU\s]*', item2) is not None:
                         item2 = re.sub(r'\d', '', item2)
                         item2 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item2)
 
