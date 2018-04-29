@@ -145,6 +145,7 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     for i in range(quote_length // gram_size + 1):
 
         random_num = random.random()
+        # random_num = 0.5
 
         cum_prob = 0
         for potential_next_word, count in grammed_input[current_word]['grams'].items():
