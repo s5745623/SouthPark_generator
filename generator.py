@@ -344,7 +344,7 @@ def Stress(rhyme_word, line,stop_words_list):
             item1 = ' '.join(item1)
             if re.search('\b[^AEIOU\s]*', item1) is not None:
                 item1 = re.sub(r'\d', '', item1)
-                item1 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item1)
+                item1 = re.sub(r'\b[^AEIOU\s]*', '', item1)
             for item2 in pron_list2:
                 if re.search('1', item2) is not None:
                     while re.search('1', item2.split()[0]) is None:
@@ -352,7 +352,7 @@ def Stress(rhyme_word, line,stop_words_list):
                     item2 = ' '.join(item2)
                     if re.search('\b[^AEIOU\s]*', item2) is not None:
                         item2 = re.sub(r'\d', '', item2)
-                        item2 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item2)
+                        item2 = re.sub(r'\b[^AEIOU\s]*', '', item2)
 
                 if item1 == item2:
                     count_match += 1
@@ -360,12 +360,12 @@ def Stress(rhyme_word, line,stop_words_list):
         elif re.search('0', item1) is not None and re.search('1', item1) is None:
             if re.search('\b[^AEIOU\s]*', item1) is not None:
                 item1 = re.sub(r'\d', '', item1)
-                item1 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item1)
+                item1 = re.sub(r'\b[^AEIOU\s]*', '', item1)
             for item2 in pron_list2:
                 if re.search('0', item2) is not None:
                     if re.search('\b[^AEIOU\s]*', item2) is not None:
                         item2 = re.sub(r'\d', '', item2)
-                        item2 = re.sub(r'\b[^AEIOU\s][^AEIOU\s]*', '', item2)
+                        item2 = re.sub(r'\b[^AEIOU\s]*', '', item2)
 
                 if item1 == item2:
                     count_match += 1
