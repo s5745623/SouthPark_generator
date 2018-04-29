@@ -19,7 +19,7 @@ stanzas = int(input("How many Stanzas for the poem? "))
 mood = input("Pos or Neg? ")
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
-
+file = open('results.txt','w')
 
 quotes = pd.read_csv('data/All-seasons.csv')
 
@@ -81,13 +81,15 @@ for speaker in top_characters:
     temp_entry_dict['Lexical Diversity'] = character_params[4]
     
     character_quotes_parameters_df = character_quotes_parameters_df.append(temp_entry_dict, ignore_index=True)
-    
-#character_quotes_parameters_df.head()
+
+file.write(str(character_quotes_parameters_df.head()))
+# print(character_quotes_parameters_df.head())
 
 kyle_word_freq = nltk.FreqDist(kyle_tokens_list)
 kyle_word_log_probability = [ {word: -log(float(count)/ len(kyle_tokens_list))} for word, count in kyle_word_freq.items() ]
 kyle_word_log_probability[:10]
-
+file.write('\n\n')
+file.write(str(kyle_word_log_probability[:10]))
 
 # Build n-gram builder
 def build_ngram(text, n):
@@ -222,19 +224,28 @@ def generate_poem(stanzas, target):
                     # print(score)
             # print(poem + '\tSentiment: ' + str(dict(score)))
         #print('\n')
+
     for stans in poem_list.values():    
         for lines in stans:
             print(lines)
         print('\n')
 
+    return poem_list
+
 target = who 
 # stanzas = 4
 kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
 #print(kyle_bigram)
-generate_poem(stanzas, target)
+final_poem = generate_poem(stanzas, target)
+file.write('\n\n\n\nOh {}!\n\n'.format(target))
 
+for stans in final_poem.values():    
+    for lines in stans:
+        file.write(lines+'\n')
+    file.write('\n')
+file.close()
 
-# viz.viz(character_quotes_parameters_df)
+viz.viz(character_quotes_parameters_df)
 
 
 
