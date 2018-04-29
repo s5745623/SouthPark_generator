@@ -246,6 +246,10 @@ def generate_poem(stanzas, target):
                     poem_list[k].append(poem + '.')
                     print("perplexity:" + str(perpleList[-1]))
                     # print(score)
+            for line in range(len(poem_list[k])):
+                if line > 1 and nltk.word_tokenize(poem_list[k][line])[-2] == \
+                        nltk.word_tokenize(poem_list[k][line - 2])[-2]:
+                    del poem_list[k][line]
             # print(poem + '\tSentiment: ' + str(dict(score)))
         #print('\n')
 
