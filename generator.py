@@ -13,8 +13,20 @@ import viz
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
+who_list = ['Butters',
+'Cartman',
+'Chef',
+'Kenny',
+'Kyle',
+'Mr. Garrison',
+'Mr. Mackey',
+'Randy',
+'Sharon',
+'Stan']
 WHO = ''
-WHO = input('Who is the author: ')
+while WHO not in who_list:
+    WHO = input('Who is the author: ')
+    print('ONLY the character: '+', '.join(who_list))
 stanzas = int(input("How many Stanzas for the poem? "))
 mood = input("Pos or Neg? ")
 who = tp.get_topic(WHO)
