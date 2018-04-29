@@ -14,8 +14,7 @@ from nltk.corpus import cmudict
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
-stop_words_list = ['a','an', 'if', 'of',
- '\'s','the','their','to']
+stop_words_list = ['i','a','an', 'if', 'of','the','their','to','with']
 
 who_list = [
 'Cartman',
@@ -27,10 +26,13 @@ WHO = ''
 while WHO not in who_list:
     print('ONLY the character: '+', '.join(who_list))
     WHO = input('Who is the author: ')
-    
+    WHO = WHO[0].upper() + WHO[1:] 
+
 stanzas = int(input("\nHow many Stanzas for the poem? "))
 mood = input("POS, NEG or WTV? ")
+mood  = mood.upper()
 Rhyme = input('SR: Rhyme by stress; FSR: Rhyme by final syllable.\nGive us a rhyme type(SR/FSR): ')
+Rhyme = Rhyme.upper()
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 file = open('results.txt','w')
