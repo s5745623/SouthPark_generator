@@ -135,6 +135,8 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     output_str = start_word
 
     current_word = start_word.lower()
+    sentence_prob = 0
+    perple = 0
 
     next_word = ""
     # i=0
@@ -146,6 +148,9 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
         cum_prob = 0
         for potential_next_word, count in grammed_input[current_word]['grams'].items():
             cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
+            current_prob = log((float(count) + 0.1) / (
+                grammed_input[current_word]['total_grams_start'] + 0.1 * len(grammed_input[current_word]['grams'])))
+
             # print cum_prob, random_num
             if cum_prob > random_num:
 
@@ -157,14 +162,18 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
                 # punc last
                 # if i == quote_length // gram_size and current_word != 'punc':
                 if i == quote_length // gram_size and current_word == 'punc':
-                    output_str  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
+                    output_str,perple  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
+                if i == quote_length // gram_size and current_word == 'punc':
+                    # print(output_str)
+                    perple = 1 / (pow(sentence_prob, 1.0 / quote_length))
+                sentence_prob += current_prob
                 break
             else:
                 #print(i)
                 continue
 
-        
-    return output_str
+    perple = 1 / (pow(sentence_prob, 1.0 / quote_length))
+    return output_str,perple
 
 
 def sentiment(sentences):
@@ -191,14 +200,18 @@ def generate_poem(stanzas, target):
         i = 0
         poem_list[k] = []
         while len(poem_list[k]) < 4:
-            poem = Generate_quote(kyle_bigram, 2, target, 20)
+            perpleList = []
+            poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+            perpleList.append(perple)
             if len(poem_list[k]) == 0:
                 while CheckOOV(poem) is False:
-                    poem = Generate_quote(kyle_bigram, 2, target, 20)
+                    poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+                    perpleList.append(perple)
                 rhyme = poem.split()[-2]
             else:
                 while CheckRhyme(rhyme, poem) is False:
-                    poem = Generate_quote(kyle_bigram, 2, target, 20)
+                    poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+                    perpleList.append(perple)
             poem = 'Oh ' + poem
             #punc last
             #poem_tok = nltk.word_tokenize(re.sub(r'\spunc','!',poem[:-5]))
@@ -209,23 +222,29 @@ def generate_poem(stanzas, target):
             if score['compound'] <= -0.5 and mood == 'NEG':       
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
+                    print("perplexity:"+ str(perpleList[-1]))
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
+                    print("perplexity:" + str(perpleList[-1]))
                     # print(score)
             elif score['compound'] >= 0.5 and mood == 'POS':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
+                    print("perplexity:" + str(perpleList[-1]))
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
+                    print("perplexity:" + str(perpleList[-1]))
                     # print(score)
             elif mood == 'WTV':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
+                    print("perplexity:" + str(perpleList[-1]))
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
+                    print("perplexity:" + str(perpleList[-1]))
                     # print(score)
             # print(poem + '\tSentiment: ' + str(dict(score)))
         #print('\n')
