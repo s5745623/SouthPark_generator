@@ -58,7 +58,7 @@ kyle_lexical_diversity = len(set(kyle_tokens_list)) / len(kyle_tokens_list)
 #print(kyle_lexical_diversity)
 #len(kyle_tokens_list)/len(kyle_tokens)
 
-top_characters = quotes_by_character.count()[quotes_by_character.count().Line > 100].index
+top_characters = quotes_by_character.count()[quotes_by_character.count().Line > 1000].index
 pro_dict = cmudict.dict()
 
 def get_character_params(data, character):
@@ -236,34 +236,34 @@ def generate_poem(stanzas, target):
             if score['compound'] <= -0.5 and mood == 'NEG':       
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
-                    print("perplexity:"+ str(perpleList[-1]))
+                    # print("perplexity:"+ str(perpleList[-1]))
                     perplexityFile.write(str(perpleList[-1])+"\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]) + "\n")
+                    # print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif score['compound'] >= 0.5 and mood == 'POS':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
-                    print("perplexity:" + str(perpleList[-1]))
+                    # print("perplexity:" + str(perpleList[-1]))
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]) + "\n")
+                    # print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif mood == 'WTV':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
-                    print("perplexity:" + str(perpleList[-1]))
+                    # print("perplexity:" + str(perpleList[-1]))
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]) + "\n")
+                    # print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
 
