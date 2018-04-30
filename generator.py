@@ -36,6 +36,7 @@ mood = input("POS, NEG or WTV? ")
 mood  = mood.upper()
 Rhyme = input('SR: Rhyme by stress; FSR: Rhyme by final syllable.\nGive us a rhyme type(SR/FSR): ')
 Rhyme = Rhyme.upper()
+print('{}-gram'.format(ngram))
 who = tp.get_topic(WHO)
 # Rhyme = input('Give us a Rhyme: ')
 file = open('results.txt','w')
@@ -240,7 +241,7 @@ def generate_poem(stanzas, target):
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]))
+                    print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif score['compound'] >= 0.5 and mood == 'POS':
@@ -251,7 +252,7 @@ def generate_poem(stanzas, target):
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]))
+                    print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif mood == 'WTV':
@@ -262,7 +263,7 @@ def generate_poem(stanzas, target):
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
-                    print("perplexity:" + str(perpleList[-1]))
+                    print("perplexity:" + str(perpleList[-1]) + "\n")
                     perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
 
