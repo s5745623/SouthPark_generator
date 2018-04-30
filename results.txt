@@ -1,0 +1,30 @@
+        Name Number of Lines Total Word Count  Average Sentence Length  \
+0  Announcer             407             9188                22.574939   
+1   Barbrady             150             2017                13.446667   
+2       Bebe             221             2682                12.135747   
+3    Butters            2602            39729                15.268640   
+4    Cartman            9774           172682                17.667485   
+
+  Unique Words  Lexical Diversity  
+0         2079           0.226273  
+1          568           0.281606  
+2          648           0.241611  
+3         3900           0.098165  
+4         9595           0.055565  
+
+[{'i': 3.5603814976615}, {"'m": 5.0689505312256715}, {'gon': 5.740238917973119}, {'na': 5.462061329832901}, {'miss': 9.114768052553112}, {'him': 6.70262075704754}, {'punc': 1.6168604879047292}, {'chef': 8.27501739780129}, {'and': 4.381343531041342}, {'do': 4.8014993545595095}]
+
+
+
+Oh God!
+
+Oh God by day! my mom did! yeah! well,
+Oh God! and craig! theah! uh! please tell,
+Oh God! sonow! what a half bisexual! well,
+Oh God! right! it! everybody! we! well.
+
+Oh God! oh! hi! doctor likes you! look,
+Oh God! ten bucks! daaaa! you guys! look,
+Oh God! yeah! they drag you guys better things look,
+Oh God damnit! sweet! okay okay okay!! look.
+

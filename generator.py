@@ -139,7 +139,7 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
     output_str = start_word
 
     current_word = start_word.lower()
-    sentence_prob = 0
+    sentence_prob = 1
     perple = 0
 
     next_word = ""
@@ -153,8 +153,8 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
         cum_prob = 0
         for potential_next_word, count in grammed_input[current_word]['grams'].items():
             cum_prob += float(count) / grammed_input[current_word]['total_grams_start']
-            current_prob = log((float(count) + 0.1) / (
-                grammed_input[current_word]['total_grams_start'] + 0.1 * len(grammed_input[current_word]['grams'])))
+            current_prob = (float(count) + 0.1) / (
+                grammed_input[current_word]['total_grams_start'] + 0.1 * len(grammed_input[current_word]['grams']))
 
             # print cum_prob, random_num
             if cum_prob > random_num:
@@ -169,13 +169,16 @@ def Generate_quote(grammed_input, gram_size, start_word, quote_length):
                 if i == quote_length // gram_size and current_word == 'punc':
                     output_str,perple  = Generate_quote(grammed_input, gram_size, start_word, quote_length)
                 if i == quote_length // gram_size and current_word == 'punc':
-                    # print(output_str)
+                    #print(output_str)
                     perple = 1 / (pow(sentence_prob, 1.0 / quote_length))
-                sentence_prob += current_prob
+
+                if current_prob != 0:
+                    sentence_prob *= current_prob
                 break
             else:
                 #print(i)
                 continue
+
 
     perple = 1 / (pow(sentence_prob, 1.0 / quote_length))
     return output_str,perple
@@ -199,7 +202,7 @@ def sentiment(sentences):
     return score
 
 def generate_poem(stanzas, target):
-    
+    perplexityFile = open('perplexity.txt','a')
     poem_list = {}
     for k in range(stanzas):
         i = 0
@@ -233,28 +236,34 @@ def generate_poem(stanzas, target):
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
                     print("perplexity:"+ str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1])+"\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
                     print("perplexity:" + str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif score['compound'] >= 0.5 and mood == 'POS':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
                     print("perplexity:" + str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
                     print("perplexity:" + str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
             elif mood == 'WTV':
                 if len(poem_list[k]) < 3:
                     poem_list[k].append(poem + ',')
                     print("perplexity:" + str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
                 else: 
                     poem_list[k].append(poem + '.')
                     print("perplexity:" + str(perpleList[-1]))
+                    perplexityFile.write(str(perpleList[-1]) + "\n")
                     # print(score)
 
             # print(poem + '\tSentiment: ' + str(dict(score)))
@@ -264,7 +273,7 @@ def generate_poem(stanzas, target):
         for lines in stans:
             print(lines)
         print('\n')
-
+    perplexityFile.close()
     return poem_list
 
 def CheckOOV(line,stop_words_list):
