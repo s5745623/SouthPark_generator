@@ -34,6 +34,7 @@ def get_topic(chac):
 	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:3]
 	# print(top10_chac)
 	result = random.choice(top10_chac)[1]
+	# result = 'Kyle'
 	print('\nOh {}!\tby {}\n'.format(result, chac))
 	
 	

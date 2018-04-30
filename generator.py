@@ -22,11 +22,14 @@ who_list = [
 'Kyle',
 'Stan']
 
+ngram = 2
+quote_len = 20
+# quote_len/ngram = poem line length
 WHO = ''
 while WHO not in who_list:
     print('ONLY the character: '+', '.join(who_list))
     WHO = input('Who is the author: ')
-    WHO = WHO[0].upper() + WHO[1:] 
+    WHO = WHO[0].upper() + WHO[1:].lower() 
 
 stanzas = int(input("\nHow many Stanzas for the poem? "))
 mood = input("POS, NEG or WTV? ")
@@ -203,16 +206,16 @@ def generate_poem(stanzas, target):
         poem_list[k] = []
         while len(poem_list[k]) < 4:
             perpleList = []
-            poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+            poem,perple = Generate_quote(kyle_bigram, ngram, target, quote_len)
             perpleList.append(perple)
             if len(poem_list[k]) == 0:
                 while CheckOOV(poem,stop_words_list) is False:
-                    poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+                    poem,perple = Generate_quote(kyle_bigram, ngram, target, quote_len)
                     perpleList.append(perple)
                 rhyme = poem.split()[-2]
             else:
                 while CheckRhyme(rhyme, poem,stop_words_list) is False:
-                    poem,perple = Generate_quote(kyle_bigram, 2, target, 20)
+                    poem,perple = Generate_quote(kyle_bigram, ngram, target, quote_len)
                     perpleList.append(perple)
             poem = 'Oh ' + poem
             #punc last
@@ -277,7 +280,7 @@ def CheckOOV(line,stop_words_list):
     else:
         return False
 
-def FinalSyllable(rhyme_word, line,stop_words_list):
+def FinalSyllable(rhyme_word, line, stop_words_list):
     
 #Check if the last syllable matches the rhyme:
     pron_list1 = []
@@ -384,7 +387,7 @@ elif Rhyme == 'FSR':
     CheckRhyme = FinalSyllable
 target = who 
 # stanzas = 4
-kyle_bigram = build_ngram(' '.join(kyle_tokens_list), 2)
+kyle_bigram = build_ngram(' '.join(kyle_tokens_list), ngram)
 #print(kyle_bigram)
 final_poem = generate_poem(stanzas, target)
 file.write('\n\n\n\nOh {}!\n\n'.format(target))
