@@ -203,7 +203,7 @@ def sentiment(sentences):
     return score
 
 def generate_poem(stanzas, target):
-    perplexityFile = open('perplexity.txt','a')
+    perplexityFile = open('perplexity.txt','w')
     poem_list = {}
     for k in range(stanzas):
         i = 0
