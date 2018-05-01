@@ -11,7 +11,7 @@ def get_topic(chac):
 	chac_dic = defaultdict(list) 
 
 	for i in range(len(quotes)):        
-		chac_dic[quotes['Character'][i]].append(quotes['Line'][i])
+		chac_dic[quotes['Character'][i].lower()].append(quotes['Line'][i])
 
 	chacter = []
 	for i in chac_dic.keys():                                                                                         
