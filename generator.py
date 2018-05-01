@@ -14,7 +14,7 @@ from nltk.corpus import cmudict
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
-stop_words_list = ['i','a','an', 'if', 'of','the','their','to','with']
+stop_words_list = ['i','a','an', 'if', 'of','the','their','to','with','\'s', 'for', 'ca']
 
 who_list = [
 'Cartman',
@@ -334,58 +334,44 @@ def FinalSyllable(rhyme_word, line, stop_words_list):
 
 def Stress(rhyme_word, line,stop_words_list):
 #Check if the vowel sequence after the stressed syllable matches the rhymed word:
-    
-
-    pron_list1 = []
-    for i in pro_dict[rhyme_word]:
-        pron_list1.append(" ".join(i))
-
     rhyme_to_check = line.split()[-2]
     if rhyme_to_check in stop_words_list:
         return False
-    pron_list2 = []
-    if rhyme_to_check in pro_dict.keys():
-        for j in pro_dict[rhyme_to_check]:
-            pron_list2.append(" ".join(j))
-    else:
+    if rhyme_to_check not in pro_dict.keys():
         return False
 
-    # print(pron_list1)
-    # print(pron_list2)
+    two_word_dict = {}
+    two_word_dict[0] = pro_dict[rhyme_word]
+    two_word_dict[1] = pro_dict[rhyme_to_check]
+    pron_list1 = []
+    pron_list2 = []
     count_match = 0
-    for item1 in pron_list1:
-        if re.search('1', item1) is not None:
-            while re.search('1', item1.split()[0]) is None:
-                item1 = item1[1:]
-            item1 = ' '.join(item1)
-            if re.search('\b[^AEIOU\s]*', item1) is not None:
-                item1 = re.sub(r'\d', '', item1)
-                item1 = re.sub(r'\b[^AEIOU\s]*', '', item1)
-            for item2 in pron_list2:
-                if re.search('1', item2) is not None:
-                    while re.search('1', item2.split()[0]) is None:
-                        item2 = item2[1:]
-                    item2 = ' '.join(item2)
-                    if re.search('\b[^AEIOU\s]*', item2) is not None:
-                        item2 = re.sub(r'\d', '', item2)
-                        item2 = re.sub(r'\b[^AEIOU\s]*', '', item2)
+    for k in two_word_dict:
+        for item in two_word_dict[k]:
+            if re.search('1', ' '.join(item)) is not None:
+                while re.search('1', item[0]) is None:
+                    item = item[1:]
+                item = ' '.join(item)
+                if re.search('\s[^AEIOU]+', item) is not None:
+                    item = re.sub(r'\d', '', item)
+                    item = re.sub(r'\s[^AEIOU\s]+', '', item) #uncomment this if you want a better rhyme but words may repeat
+                else:
+                    item = re.sub(r'\d', '', item)
+            else:
+                if re.search('\s[^AEIOU]+', ' '.join(item)) is not None:
+                    item = re.sub(r'\d', '', ' '.join(item))
+                    item = re.sub(r'\s[^AEIOU\s]+', '', item) #uncomment this if you want a better rhyme but words may repeat
+                else:
+                    item = re.sub(r'\d', '', ' '.join(item))
+            if k == 0:
+                pron_list1.append(item)
+            elif k == 1:
+                pron_list2.append(item)
 
-                if item1 == item2:
-                    count_match += 1
-
-        elif re.search('0', item1) is not None and re.search('1', item1) is None:
-            if re.search('\b[^AEIOU\s]*', item1) is not None:
-                item1 = re.sub(r'\d', '', item1)
-                item1 = re.sub(r'\b[^AEIOU\s]*', '', item1)
-            for item2 in pron_list2:
-                if re.search('0', item2) is not None:
-                    if re.search('\b[^AEIOU\s]*', item2) is not None:
-                        item2 = re.sub(r'\d', '', item2)
-                        item2 = re.sub(r'\b[^AEIOU\s]*', '', item2)
-
-                if item1 == item2:
-                    count_match += 1
-
+    for vowels1 in pron_list1:
+        for vowels2 in pron_list2:
+            if vowels1 == vowels2:
+                count_match += 1
     if count_match == 0:
         return False
     else:

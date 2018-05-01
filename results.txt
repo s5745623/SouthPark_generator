@@ -1,0 +1,30 @@
+           Name  Number of Lines  Total Word Count  Average Sentence Length  \
+0       Butters           2602.0           39729.0                15.268640   
+1       Cartman           9774.0          172646.0                17.663802   
+2          Kyle           7099.0           85112.0                11.989294   
+3  Mr. Garrison           1002.0           19793.0                19.753493   
+4         Randy           2467.0           41595.0                16.860559   
+
+   Unique Words  Lexical Diversity  
+0        3900.0           0.098165  
+1        9602.0           0.055617  
+2        5316.0           0.062459  
+3        2507.0           0.126661  
+4        3875.0           0.093160  
+
+[{'personalities': 12.058998534290266}, {'hum': 12.058998534290266}, {'cheating': 10.449560621856165}, {'asswipe': 11.36585135373032}, {'wheh': 12.058998534290266}, {'negotiator': 12.058998534290266}, {'fonics': 10.113088385234953}, {'bustin': 12.058998534290266}, {'air': 9.1686267763941}, {'sixteen': 10.449560621856165}]
+
+
+
+Oh Ho!
+
+Oh Ho! kenny! magic tricks! o holy crap and,
+Oh Ho! i'mnot alive! i waant! but,
+Oh Ho!!now! our school has little angry and,
+Oh Ho ho!! and give me fat as i'm.
+
+Oh Ho! then we just can't wait for some candy,
+Oh Ho! want an abortion! what! why they actually,
+Oh Ho! very fair! i'm the role model exactly,
+Oh Ho! hello! i got ya! you have actually.
+

@@ -11,14 +11,15 @@ def get_topic(chac):
 	chac_dic = defaultdict(list) 
 
 	for i in range(len(quotes)):        
-		chac_dic[quotes['Character'][i].lower()].append(quotes['Line'][i])
+		chac_dic[quotes['Character'][i]].append(quotes['Line'][i])
 
 	chacter = []
 	for i in chac_dic.keys():                                                                                         
 		chacter.append(i)                                                        
 
-	chacter.remove('M')
-	chacter.remove('Al')
+	if ('M' or 'Al') in chacter:
+		chacter.remove('M')
+		chacter.remove('Al')
 	Kyle_dic = {}
 	top_ten_chac = []
 	for k in range(len(chac_dic[chac])):                                          
@@ -31,7 +32,7 @@ def get_topic(chac):
 					Kyle_dic[i]+=1
 				#print(Kyle_dic)
 
-	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:3]
+	top10_chac = sorted(((v,k) for k,v in Kyle_dic.items()), reverse=True)[0:5]
 	# print(top10_chac)
 	result = random.choice(top10_chac)[1]
 	# result = 'Kyle'
